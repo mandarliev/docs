@@ -16,7 +16,7 @@
 # [x] Search input component
 # [x] Templates gallery component
 # [x] Database setup (Convex)
-# [] Authentication setup (Clerk)
+# [x] Authentication setup (Clerk)
 # [] Create & list documents
 # [] Document actions (update & delete)
 # [] Seach documents
