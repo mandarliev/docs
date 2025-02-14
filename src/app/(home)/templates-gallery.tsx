@@ -15,7 +15,7 @@ import { api } from "../../../convex/_generated/api";
 import { useState } from "react";
 import { toast } from "sonner";
 
-const TemplatesGallery = () => {
+export const TemplatesGallery = () => {
   const router = useRouter();
   const create = useMutation(api.documents.create);
   const [isCreating, setIsCreating] = useState(false);

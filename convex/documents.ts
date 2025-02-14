@@ -1,5 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { paginationOptsValidator } from "convex/server";
+
 import { mutation, query } from "./_generated/server";
 
 export const getByIds = query({
@@ -13,9 +14,10 @@ export const getByIds = query({
       if (document) {
         documents.push({ id: document._id, name: document.title });
       } else {
-        documents.push({ id, name: "Deleted" });
+        documents.push({ id, name: "[Removed]" });
       }
     }
+
     return documents;
   },
 });
@@ -29,7 +31,7 @@ export const create = mutation({
     const user = await ctx.auth.getUserIdentity();
 
     if (!user) {
-      throw new ConvexError("Unauthorized");
+      throw new ConvexError("Unathorized");
     }
 
     const organizationId = (user.organization_id ?? undefined) as
@@ -37,7 +39,7 @@ export const create = mutation({
       | undefined;
 
     return await ctx.db.insert("documents", {
-      title: args.title ?? "Untitled document",
+      title: args.title ?? "Untitled coument",
       ownerId: user.subject,
       organizationId,
       initialContent: args.initialContent,
@@ -61,6 +63,7 @@ export const get = query({
       | string
       | undefined;
 
+    // Search within organization
     if (search && organizationId) {
       return await ctx.db
         .query("documents")
@@ -70,6 +73,7 @@ export const get = query({
         .paginate(paginationOpts);
     }
 
+    // Personal search
     if (search) {
       return await ctx.db
         .query("documents")
@@ -79,18 +83,22 @@ export const get = query({
         .paginate(paginationOpts);
     }
 
+    // All docs inside organization
     if (organizationId) {
       return await ctx.db
         .query("documents")
         .withIndex("by_organization_id", (q) =>
           q.eq("organizationId", organizationId)
         )
+        .order("desc")
         .paginate(paginationOpts);
     }
 
+    // All personal docs
     return await ctx.db
       .query("documents")
       .withIndex("by_owner_id", (q) => q.eq("ownerId", user.subject))
+      .order("desc")
       .paginate(paginationOpts);
   },
 });
@@ -147,7 +155,6 @@ export const updateById = mutation({
     }
 
     const isOwner = document.ownerId === user.subject;
-
     const isOrganizationMember = !!(
       document.organizationId && document.organizationId === organizationId
     );
@@ -163,6 +170,13 @@ export const updateById = mutation({
 export const getById = query({
   args: { id: v.id("documents") },
   handler: async (ctx, { id }) => {
-    return await ctx.db.get(id);
+    const document = await ctx.db.get(id);
+
+    if (!document) {
+      throw new ConvexError("Document not found");
+    }
+
+    return document;
   },
 });
+
