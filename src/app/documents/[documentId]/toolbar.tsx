@@ -1,6 +1,6 @@
 "use client";
 
-import { type ColorResult, CirclePicker, SketchPicker } from "react-color";
+import { type ColorResult, SketchPicker } from "react-color";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/use-editor-store";
@@ -49,7 +49,6 @@ import {
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import TextAlign from "@tiptap/extension-text-align";
 
 const LineHeightButton = () => {
   const { editor } = useEditorStore();

@@ -47,7 +47,7 @@ export const Editor = ({ initialContent }: EditorProps) => {
     onCreate({ editor }) {
       setEditor(editor);
     },
-    onDestroy(props) {
+    onDestroy() {
       setEditor(null);
     },
     onUpdate({ editor }) {
