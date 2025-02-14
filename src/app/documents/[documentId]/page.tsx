@@ -20,7 +20,7 @@ const DocumentIdPage = async ({ params }: DocumentIdPageProps) => {
   const preloadedDocument = await preloadQuery(
     api.documents.getById,
     { id: documentId },
-    { token },
+    { token }
   );
 
   if (!preloadedDocument) {
